@@ -127,10 +127,10 @@ class mproperty(object):
         self.doc = doc
 
     def getter(self, get):
-        return mproperty(get, self.set, self.delete, self.doc)
+        return mproperty(get, self.fset, self.fdel, self.doc)
  
     def setter(self, set):
-        return mproperty(self.get, set, self.delete, self.doc)
+        return mproperty(self.fget, set, self.fdel, self.doc)
  
     def deleter(self, delete):
-        return mproperty(self.get, self.set, delete, self.doc)
+        return mproperty(self.fget, self.fset, delete, self.doc)

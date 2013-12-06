@@ -9,7 +9,7 @@ except:
 
 setup(
     name='mprop',
-    version='0.12',
+    version='0.13',
     description='Module properties for Python',
     author='Josiah Carlson',
     author_email='josiah.carlson@gmail.com',
