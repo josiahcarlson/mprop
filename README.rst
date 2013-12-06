@@ -53,11 +53,17 @@ those that import the module can access the properties as normal::
     def prop(mod):
         return "I was called!"
 
+    def fcn():
+        # I can access the property via:
+        print _pmodule.prop
+
     # test.py
     import example
 
     # the below should print "I was called!"
     print example.prop
+    # this should also print "I was called!"
+    example.fcn()
 
 Referencing properties from within the module
 =============================================
