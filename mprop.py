@@ -105,7 +105,7 @@ class mproperty(object):
     'property', but only apply it to module-level functions, and watch as your
     module gains properties!
     '''
-    __slots__ = 'fget', 'fset', 'fdel', 'doc'
+    __slots__ = 'fget', 'fset', 'fdel', '__doc__'
     def __init__(self, fget=None, fset=None, fdel=None, doc=None):
         # Make sure we've got a valid function so we can pull its globals.
         for func in [fget, fset, fdel]:
