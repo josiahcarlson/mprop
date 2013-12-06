@@ -105,7 +105,7 @@ class mproperty(object):
     'property', but only apply it to module-level functions, and watch as your
     module gains properties!
     '''
-    __slots__ = 'fget', 'fset', 'fdel', '__doc__'
+    __slots__ = 'fget', 'fset', 'fdel', 'doc'
     def __init__(self, fget=None, fset=None, fdel=None, doc=None):
         # Make sure we've got a valid function so we can pull its globals.
         for func in [fget, fset, fdel]:
@@ -124,13 +124,13 @@ class mproperty(object):
         self.fget = fget
         self.fset = fset
         self.fdel = fdel
-        self.__doc__ = doc
+        self.doc = doc
 
     def getter(self, get):
-        return mproperty(get, self.set, self.delete, self.__doc__)
+        return mproperty(get, self.set, self.delete, self.doc)
  
     def setter(self, set):
-        return mproperty(self.get, set, self.delete, self.__doc__)
+        return mproperty(self.get, set, self.delete, self.doc)
  
     def deleter(self, delete):
-        return mproperty(self.get, self.set, delete, self.__doc__)
+        return mproperty(self.get, self.set, delete, self.doc)
