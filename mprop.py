@@ -6,6 +6,8 @@ import types
 
 __all__ = ['init', 'mproperty']
 _cleanup_lock = threading.Lock()
+PY3 = sys.version_info[:2] >= (3, 0)
+_dtypes = type if PY3 else (type, types.ClassType)
 
 def isdescriptor(v):
     # shortcut for the most common descriptor in Python land
@@ -13,7 +15,7 @@ def isdescriptor(v):
         return True
 
     # omit descriptor/property definitions
-    if isinstance(v, (types.TypeType, types.ClassType)):
+    if isinstance(v, _dtypes):
         return False
 
     # check for the descriptor protocol
@@ -25,7 +27,7 @@ def isdescriptor(v):
 
 def _cleanup(Module, glbls):
     items = glbls.items()
-    if sys.version_info >= (3, 0, 0):
+    if PY3:
         items = list(items)
 
     # Directly assign the properties to the Module class so that they behave
@@ -91,6 +93,10 @@ def init(glbls=None):
 
         # Replace the original module with this one.
         sys.modules[name] = module
+    else:
+        # Assume that module is one of our Module classes, fetch it here just
+        # in case someone is using both init() and @mproperty together
+        Module = type(module)
 
     if init:
         # Handle property assignment and global namespace cleanup
@@ -115,7 +121,7 @@ class mproperty(object):
             raise TypeError("At least one of fget, fset, or fdel must be a function")
 
         # Initialize the module
-        mod = init(func.func_globals)
+        mod = init(func.__globals__ if PY3 else func.func_globals)
         # Hook any attribute access so we can clean up our properties that are
         # assigned to the global namespace.
         type(mod).__getattribute__ = _getattr
