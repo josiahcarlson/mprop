@@ -16,5 +16,4 @@ install:
 	python setup.py install
 
 upload:
-	python3.6 setup.py sdist
-	twine upload dist/*
+	python3.6 setup.py sdist upload
