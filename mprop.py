@@ -33,10 +33,14 @@ def _cleanup(Module, glbls):
     # Directly assign the properties to the Module class so that they behave
     # like properties, and remove them from the globals so that they don't
     # alias themselves.
+    tf = type(_cleanup)
     for k, v in items:
         if isinstance(v, mproperty):
             v = property(v.fget, v.fset, v.fdel, v.doc)
-        if isdescriptor(v):
+        if isinstance(v, tf):
+            del glbls[k]
+            setattr(Module, k, staticmethod(v))
+        elif isdescriptor(v):
             del glbls[k]
             setattr(Module, k, v)
 

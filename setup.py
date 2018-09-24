@@ -9,7 +9,7 @@ except:
 
 setup(
     name='mprop',
-    version='0.14',
+    version='0.15.0',
     description='Module properties for Python',
     author='Josiah Carlson',
     author_email='josiah.carlson@gmail.com',
@@ -29,6 +29,8 @@ setup(
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     license='GNU LGPL v2.1',
     long_description=long_description,
