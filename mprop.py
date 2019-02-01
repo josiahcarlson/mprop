@@ -44,20 +44,6 @@ def _cleanup(Module, glbls):
             del glbls[k]
             setattr(Module, k, v)
 
-def _getattr(self, attr):
-    # Ensure that we don't have competing cleanup/initialization.
-    _cleanup_lock.acquire()
-    try:
-        # Stop calling me, cleanup is happening next.
-        del type(self).__getattribute__
-        # Handle property assignment and namespace cleanup.
-        _cleanup(type(self), self.__dict__)
-    finally:
-        _cleanup_lock.release()
-
-    # Use the standard object attribute resolution.
-    return object.__getattribute__(self, attr)
-
 def init(glbls=None):
     '''
     Initialize the module-level properties/descriptors for the module that
@@ -102,12 +88,49 @@ def init(glbls=None):
         # in case someone is using both init() and @mproperty together
         Module = type(module)
 
-    if init:
-        # Handle property assignment and global namespace cleanup
-        _cleanup(Module, glbls)
+    # Handle property assignment and global namespace cleanup
+    _cleanup(Module, glbls)
 
     return module
 
+class auto_init(object):
+    '''
+    New magic, uses the system profiler to handle module property cleanup after
+    module initialization.
+    '''
+    __slots__ = 'op', 'gl'
+    def __init__(self):
+        self.op = None
+        self.gl = {}
+
+    def add(self, gl):
+        if id(gl) not in self.gl:
+            # don't know about this module / globals yet
+
+            if not self.gl:
+                # install the profiler / cleanup handler, but keep the old one
+                self.op = sys.getprofile()
+                sys.setprofile(self)
+
+            # keep the reference for later
+            self.gl[id(gl)] = gl
+
+    def __call__(self, f, e, a):
+        if e == 'return' and \
+            f.f_code.co_name == '<module>' and \
+            id(f.f_globals) in self.gl:
+
+                # initialize one of the mprop modules
+                g = f.f_globals
+                m = init(g)
+                self.gl.pop(id(f.f_globals))
+
+                if not self.gl:
+                    # no more mprop modules
+                    sys.setprofile(self.op)
+                    self.op = None
+
+auto_init = auto_init()
 
 class mproperty(object):
     '''
@@ -124,11 +147,10 @@ class mproperty(object):
         if not isinstance(func, types.FunctionType):
             raise TypeError("At least one of fget, fset, or fdel must be a function")
 
-        # Initialize the module
-        mod = init(func.__globals__ if PY3 else func.func_globals)
-        # Hook any attribute access so we can clean up our properties that are
-        # assigned to the global namespace.
-        type(mod).__getattribute__ = _getattr
+        # If we haven't installed the profiler for the module, install it. We
+        # need it to set up the properties after the module is loaded. Replaces
+        # the need for init() at the end.
+        auto_init.add(func.__globals__ if PY3 else func.func_globals)
 
         # Update our references
         self.fget = fget
