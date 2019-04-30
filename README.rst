@@ -1,4 +1,15 @@
 
+In December 2013, Giampaolo asked if it was possble to do property-like things
+in Python modules. It was. This was the result. Apparently a lot of Python folks
+really liked this functionality, or functionality like it, because in 2017 there
+were two PEPs that were put forward to add deferred attribute lookup to modules:
+https://www.python.org/dev/peps/pep-0549/
+https://www.python.org/dev/peps/pep-0562/
+
+Ultimately the simpler of the two (PEP 562) won out, and if you are using Python
+3.7 or later, you can use the PEP 562 deferred attributes. As such, unless there
+is something major, this project is mostly for historical purposes.
+
 Description
 ===========
 
