@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 try:
     long_description = open('README.rst').read()
@@ -9,7 +12,7 @@ except:
 
 setup(
     name='mprop',
-    version='0.16.0',
+    version='0.17.0',
     description='Module properties for Python',
     author='Josiah Carlson',
     author_email='josiah.carlson@gmail.com',

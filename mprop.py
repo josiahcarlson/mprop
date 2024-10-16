@@ -1,11 +1,14 @@
 
-import imp
+# Copyright 2024 Josiah Carlson <josiah.carlson@gmail.com>
+# Released under the LGPL 2.1 license
+# Honestly, you shouldn't be using this, you should upgrade to Python 3.7+
+# and use module properties.
+
 import sys
 import threading
 import types
 
 __all__ = ['init', 'mproperty']
-_cleanup_lock = threading.Lock()
 PY3 = sys.version_info[:2] >= (3, 0)
 _dtypes = type if PY3 else (type, types.ClassType)
 

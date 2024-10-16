@@ -16,4 +16,8 @@ install:
 	python setup.py install
 
 upload:
-	python3.6 setup.py sdist upload
+	python3.11 setup.py sdist | \
+		grep 'mprop-[.0-9]*' | \
+		awk '{print $$2}' | \
+		head -n1 | \
+		xargs -I REP python3.11 -m twine upload "dist/REP.tar.gz"
